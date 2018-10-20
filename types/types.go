@@ -51,3 +51,18 @@ type RequestCommand struct {
 
 // ErrorHandler is error handler for http
 type ErrorHandler func(w http.ResponseWriter, r *http.Request) error
+
+func (h ErrorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if err := h(w, r); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// FileStructure defines the structure of file
+type FileStructure struct {
+	Name       string          `json:"name"`
+	Type       string          `json:"type"`
+	Children   []FileStructure `json:"children"`
+	Root       bool            `json:"root"`
+	IsSelected bool            `json:"isSelected"`
+}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"time"
@@ -12,8 +13,8 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/satori/go.uuid"
 
+	authModel "github.com/sysu-go-online/auth-service/model"
 	ttyModel "github.com/sysu-go-online/tty-service/model"
-	userModel "github.com/sysu-go-online/user-service/model"
 
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/yaml.v2"
@@ -102,7 +103,7 @@ func CheckJWT(jwtString string, AuthRedisClient *redis.Client) (bool, error) {
 		return false, nil
 	}
 
-	has, err := userModel.IsJWTExist(jwtString, AuthRedisClient)
+	has, err := authModel.IsJWTExist(jwtString, AuthRedisClient)
 	return !has, err
 }
 
@@ -271,4 +272,31 @@ func ParseSystemCommand(command []string, DomainNameRedisClient *redis.Client) (
 	default:
 		return nil, errors.New("Invalid command")
 	}
+}
+
+func Dfs(path string, depth int) ([]types.FileStructure, error) {
+	var structure []types.FileStructure
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return nil, err
+	}
+	for _, file := range files {
+		tmp := types.FileStructure{
+			Name:       file.Name(),
+			Root:       false,
+			IsSelected: false,
+		}
+		if file.IsDir() {
+			tmp.Type = "dir"
+			nextPath := filepath.Join(path, file.Name())
+			tmp.Children, err = Dfs(nextPath, depth+1)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			tmp.Type = "file"
+		}
+		structure = append(structure, tmp)
+	}
+	return structure, nil
 }
