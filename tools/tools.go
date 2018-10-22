@@ -14,7 +14,7 @@ import (
 	"github.com/satori/go.uuid"
 
 	authModel "github.com/sysu-go-online/auth-service/model"
-	ttyModel "github.com/sysu-go-online/tty-service/model"
+	wsModel "github.com/sysu-go-online/ws-service/model"
 
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/yaml.v2"
@@ -233,7 +233,7 @@ func handleMapCommand(command []string, DomainNameRedisClient *redis.Client) (*t
 			return nil, errors.New("Can not get suitable domain name")
 		}
 		uuid := generateUUID()
-		if has, err := ttyModel.IsUUIDExists(uuid, DomainNameRedisClient); err == nil {
+		if has, err := wsModel.IsUUIDExists(uuid, DomainNameRedisClient); err == nil {
 			if has {
 				cnt++
 				continue
@@ -299,4 +299,49 @@ func Dfs(path string, depth int) ([]types.FileStructure, error) {
 		structure = append(structure, tmp)
 	}
 	return structure, nil
+}
+
+// GenerateCommandFromMenu returns command according to different language and menu
+func GenerateCommandFromMenu(language int, menu string) (string, error) {
+	switch language {
+	case 0:
+		// golang
+		switch menu {
+		case "run":
+			return "go run main.go\n", nil
+		case "test":
+			return "go test\n", nil
+		case "compile":
+			return "go build\n", nil
+		case "format":
+			return "go fmt -w .\n", nil
+		default:
+			return "", errors.New("can not parse operation")
+		}
+	case 1:
+		// c++
+		switch menu {
+		case "run":
+			return "./main\n", nil
+		case "test":
+			// TODO:
+		case "compile":
+			return "make clean && make\n", nil
+		default:
+			return "", errors.New("can not parse operation")
+		}
+	case 2:
+		// python
+		switch menu {
+		case "run":
+			return "python main.py", nil
+		case "test":
+			// TODO:
+		default:
+			return "", errors.New("can not parse operation")
+		}
+	default:
+		return "", errors.New("unsupported language")
+	}
+	return "", nil
 }
