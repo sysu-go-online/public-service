@@ -345,3 +345,15 @@ func GenerateCommandFromMenu(language int, menu string) (string, error) {
 	}
 	return "", nil
 }
+
+// ChangePermission change the permission of home with given username recursively
+func ChangePermission(username string) error {
+	path := filepath.Join("/home", username, "projects")
+
+	return filepath.Walk(path, func(name string, info os.FileInfo, err error) error {
+		if err == nil {
+			err = os.Chmod(name, 0777)
+		}
+		return err
+	})
+}
