@@ -11,13 +11,13 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 
 	authModel "github.com/sysu-go-online/auth-service/model"
 	wsModel "github.com/sysu-go-online/ws-service/model"
 
 	"golang.org/x/crypto/bcrypt"
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/sysu-go-online/public-service/types"
@@ -287,7 +287,7 @@ func Dfs(path string, depth int) ([]types.FileStructure, error) {
 			IsSelected: false,
 		}
 		if file.IsDir() {
-			tmp.Type = "dir"
+			tmp.Type = "folder"
 			nextPath := filepath.Join(path, file.Name())
 			tmp.Children, err = Dfs(nextPath, depth+1)
 			if err != nil {
