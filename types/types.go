@@ -63,6 +63,4 @@ type FileStructure struct {
 	Name       string          `json:"name"`
 	Type       string          `json:"type"`
 	Children   []FileStructure `json:"children"`
-	Root       bool            `json:"root"`
-	IsSelected bool            `json:"isSelected"`
 }
