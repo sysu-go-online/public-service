@@ -284,7 +284,6 @@ func Dfs(path string, depth int) ([]types.FileStructure, error) {
 		tmp := types.FileStructure{
 			Name:       file.Name(),
 			Root:       false,
-			IsSelected: false,
 		}
 		if file.IsDir() {
 			tmp.Type = "folder"
