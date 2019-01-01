@@ -283,7 +283,6 @@ func Dfs(path string, depth int) ([]types.FileStructure, error) {
 	for _, file := range files {
 		tmp := types.FileStructure{
 			Name:       file.Name(),
-			Root:       false,
 		}
 		if file.IsDir() {
 			tmp.Type = "folder"
